@@ -1,0 +1,9 @@
+
+]	java:S125"<This block of commented-out lines of code should be removed.(ëŒÔ¶ùÿÿÿÿ8ÆâÊ1
+]	java:S125"<This block of commented-out lines of code should be removed.(è•òÓÿÿÿÿÿ8ÌâÊ1
+X
+java:S1128"6Remove this unused import 'javax.crypto.KeyGenerator'.(ÑÃ’§ÿÿÿÿÿ8ÎâÊ1
+P
+java:S1128"3Remove this unused import 'javax.crypto.SecretKey'.(±•¸×8ÎâÊ1
+e
+java:S1128	"CRemove this unused import 'java.security.NoSuchAlgorithmException'.(ŒòÍ¾şÿÿÿÿ8ÎâÊ1

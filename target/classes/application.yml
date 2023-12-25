@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      username: omarkincal
+      password: omarkincal
+      host: localhost
+      port: 27017
+      database: chat_app
+      authentication-database: admin
+
+server:
+  port: 9090
