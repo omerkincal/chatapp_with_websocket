@@ -78,6 +78,10 @@ public class ChatMessageService{
             message.setContent(encryptedMessage);
 
             repository.save(message);
+
+            String decryptedMessage = MessageEncryption.decryptMessage(message.getContent(),chatId );
+            message.setContent(decryptedMessage);
+
             return message;
         } catch (Exception e) {
             // Handle exception
@@ -123,8 +127,8 @@ public class ChatMessageService{
                 ChatMessage decryptedMessage = new ChatMessage();
                 decryptedMessage.setChatId(chatId);
                 decryptedMessage.setContent(decryptedContent);
-                decryptedMessage.setSenderId(senderId);
-                decryptedMessage.setSenderId(recipientId);
+                decryptedMessage.setSenderId(encryptedMessage.getSenderId());
+                decryptedMessage.setRecipientId(encryptedMessage.getRecipientId());
                 decryptedMessages.add(decryptedMessage);
             }
 

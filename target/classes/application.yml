@@ -1,4 +1,18 @@
+server:
+  port: 9090
 spring:
+  main:
+    allow-circular-references: false
+  application:
+    name: chat-app
+  datasource:
+    url: jdbc:mysql://localhost:3306/chat-app?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: omeR%50hajk
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
   data:
     mongodb:
       username: omarkincal
@@ -7,6 +21,9 @@ spring:
       port: 27017
       database: chat_app
       authentication-database: admin
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
-server:
-  port: 9090
