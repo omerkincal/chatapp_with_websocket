@@ -20,4 +20,8 @@ public class ChatMessage {
     private String recipientId;
     private String content;
     private Date timestamp;
+
+    public ChatMessage(String senderId, String recipientId, String decryptedContent) {
+        super();
+    }
 }

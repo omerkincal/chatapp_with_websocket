@@ -57,3 +57,5 @@ j
 :src/main/java/org/omarkincal/chatapp/chat/ChatMessage.java,a\4\a409b54f945cabed1d0ae21401ead7b4456a503e
 Å
 Q.idea/sonarlint/securityhotspotstore/b/e/becf4b606ff9e6bc610235b0d382fcac1c17a1bf,d\8\d8e50383cd62a26dc4f6891bc47a21295c864ffe
+7
+pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec

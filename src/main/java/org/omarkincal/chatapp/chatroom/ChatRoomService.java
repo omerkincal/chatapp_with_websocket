@@ -1,8 +1,10 @@
 package org.omarkincal.chatapp.chatroom;
 
 import lombok.RequiredArgsConstructor;
+import org.omarkincal.chatapp.chat.MessageEncryption;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.util.Optional;
 
 @Service
@@ -13,7 +15,7 @@ public class ChatRoomService {
 
     public Optional<String> getChatRoomId(String senderId, String recipientId, Boolean isRoomExist) {
         return repository.findBySenderIdAndRecipientId(senderId, recipientId)
-                .map(ChatRoom::getChatId)
+                .map(ChatRoom::getChatKey)
                 .or(() -> {
                             if (isRoomExist) {
                                 var chatId = createChat(senderId, recipientId);
@@ -26,15 +28,16 @@ public class ChatRoomService {
     }
 
     private String createChat(String senderId, String recipientId) {
-        var chatId = String.format("%s_%s",senderId,recipientId);
+        SecretKey chatKey = MessageEncryption.generateChatRoomKey(senderId,recipientId);
+        String chatId = MessageEncryption.secretKeyToString(chatKey);
         ChatRoom senderRecipient = ChatRoom.builder()
-                .chatId(chatId)
+                .chatKey(chatId)
                 .senderId(senderId)
                 .recipientId(recipientId)
                 .build();
 
         ChatRoom recipientSender = ChatRoom.builder()
-                .chatId(chatId)
+                .chatKey(chatId)
                 .senderId(recipientId)
                 .recipientId(senderId)
                 .build();

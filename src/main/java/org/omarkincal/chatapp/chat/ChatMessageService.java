@@ -1,23 +1,29 @@
 package org.omarkincal.chatapp.chat;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.omarkincal.chatapp.chatroom.ChatRoomService;
+import org.omarkincal.chatapp.user.UserService;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatMessageService{
     private final ChatMessageRepository repository;
     private final ChatRoomService chatRoomService;
+    private final UserService userService;
 
-  /*  SecretKey secretKey;
-
+/*
     {
         try {
             secretKey = KeyGenerator.getInstance("AES").generateKey();
@@ -54,7 +60,33 @@ public class ChatMessageService{
             System.out.println("Deşifre Edilmiş Metin: " + new String(decryptedBytes));
     *
     * */
-    public ChatMessage saveMessage(ChatMessage message){
+
+    public ChatMessage saveMessage(ChatMessage message) {
+        try {
+           String chatId = chatRoomService.getChatRoomId(
+                            message.getSenderId(),
+                            message.getRecipientId(),
+                            true)
+                    .orElseThrow();
+
+
+            message.setChatId(chatId);
+
+
+            // Mesajı şifrele
+            String encryptedMessage = MessageEncryption.encryptMessage(message.getContent(),chatId );
+            message.setContent(encryptedMessage);
+
+            repository.save(message);
+            return message;
+        } catch (Exception e) {
+            // Handle exception
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+  /*  public ChatMessage saveMessage(ChatMessage message){
         var chatId = chatRoomService.getChatRoomId(
                 message.getSenderId(),
                 message.getRecipientId(),
@@ -63,12 +95,42 @@ public class ChatMessageService{
         message.setChatId(chatId);
         repository.save(message);
         return message;
-    }
+    }*/
 
-    public List<ChatMessage> findChatMessages(String senderId, String recipientId){
+   /* public List<ChatMessage> findChatMessages(String senderId, String recipientId){
         var chatId = chatRoomService.getChatRoomId(senderId,recipientId,false);
         return chatId.map(repository::findByChatId).orElse(new ArrayList<>());
+    }*/
+
+    public List<ChatMessage> findChatMessages(String senderId, String recipientId) {
+        Optional<String> chatIdOptional = chatRoomService.getChatRoomId(senderId, recipientId, true);
+
+        if (chatIdOptional.isPresent()) {
+            String chatId = chatIdOptional.get();
+
+            List<ChatMessage> encryptedMessages = repository.findByChatId(chatId);
+
+            // Şifreli mesajları çöz
+            List<ChatMessage> decryptedMessages = new ArrayList<>();
+            for (ChatMessage encryptedMessage : encryptedMessages) {
+                String decryptedContent = null;
+                try {
+                    decryptedContent = MessageEncryption.decryptMessage(encryptedMessage.getContent(), chatId);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                //ChatMessage decryptedMessage = new ChatMessage(encryptedMessage.getSenderId(), encryptedMessage.getRecipientId(), decryptedContent);
+                ChatMessage decryptedMessage = new ChatMessage();
+                decryptedMessage.setChatId(chatId);
+                decryptedMessage.setContent(decryptedContent);
+                decryptedMessage.setSenderId(senderId);
+                decryptedMessage.setSenderId(recipientId);
+                decryptedMessages.add(decryptedMessage);
+            }
+
+            return decryptedMessages;
+        } else {
+            return new ArrayList<>();
+        }
     }
-
-
 }

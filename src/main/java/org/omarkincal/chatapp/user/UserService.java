@@ -10,20 +10,25 @@ import java.util.List;
 public class UserService {
     private final UserRepository repository;
 
-    public void saveUser(User user){
+
+    public void saveUser(User user) {
         user.setStatus(Status.ONLINE);
         repository.save(user);
     }
 
-    public void disconnect(User user){
+    public User getUserById(String id) {
+        return repository.findById(id).get();
+    }
+
+    public void disconnect(User user) {
         var connectedUser = repository.findById(user.getNickName()).orElse(null);
-        if (connectedUser != null){
+        if (connectedUser != null) {
             connectedUser.setStatus(Status.OFFLINE);
             repository.save(connectedUser);
         }
     }
 
-    public List<User> findConnectedUsers(){
+    public List<User> findConnectedUsers() {
         return repository.findAllByStatus(Status.ONLINE);
     }
 }
